@@ -9,20 +9,25 @@ import (
 )
 
 func main() {
+	db.InitDB()
+
 	server := gin.Default()
+
+	server.GET("/events", getEvents)
+	server.POST("/createEvent", createEvent)
 	server.Run(":8080") //localhost:8080
-	isDbReady := make(chan bool)
-	go db.InitDB(isDbReady)
 
-	if <-isDbReady {
-		server.GET("/events", getEvents)
-		server.POST("/createEvent", createEvent)
-
-	}
 }
 
 func getEvents(context *gin.Context) {
-	events, _ := models.GetAllEvents()
+	events, err := models.GetAllEvents()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to get events",
+			"err":     err.Error(),
+		})
+		return // return early if there is an error fetching events. No need to continue with the rest of the function.
+	}
 	context.JSON(http.StatusOK, events)
 }
 
@@ -37,7 +42,14 @@ func createEvent(ctx *gin.Context) {
 	} else {
 		event.ID = 1
 		event.UserID = 1
-		event.Save()
+		err = event.Save()
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Failed to create event",
+				"err":     err.Error(),
+			})
+			return // return early if there is an error saving the event. No need to continue with the rest of the function.
+		}
 		ctx.JSON(http.StatusCreated, gin.H{
 			"message": "Event created successfully",
 			"event":   event,

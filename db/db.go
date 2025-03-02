@@ -9,7 +9,7 @@ import (
 
 var DB *sql.DB
 
-func InitDB(isDbReady chan bool) {
+func InitDB() {
 	var err error
 	DB, err = sql.Open("sqlite3", "api.db")
 	if err != nil {
@@ -20,7 +20,6 @@ func InitDB(isDbReady chan bool) {
 	DB.SetMaxIdleConns(5)
 
 	createTables()
-	isDbReady <- true
 }
 
 func createTables() {
@@ -29,9 +28,9 @@ func createTables() {
 		id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 		name TEXT NOT NULL,
     description TEXT NOT NULL,
+		location TEXT NOT NULL,
     dateTime DATETIME NOT NULL,
-    location TEXT NOT NULL,
-		userId INTEGER NOT NULL,
+		userId INTEGER NOT NULL
 	)
 	`
 	_, err := DB.Exec(createEventTable)
