@@ -8,5 +8,6 @@ import (
 func SetupRoutes(server *gin.Engine) {
 	server.GET("/events", handlers.GetEventsHandler)
 	server.POST("/createEvent", handlers.CreateEventHandler)
-
+	server.GET("/events/:id", handlers.GetEventByIdHandler)
+	server.PUT("/updateEvent/:id", handlers.UpdateEvent)
 }
