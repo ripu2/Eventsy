@@ -101,3 +101,18 @@ func (event Event) UpdateEvent(id int64) error {
 	}
 	return nil
 }
+
+func (event Event) DeleteEvent(id int64) error {
+	query := `DELETE  FROM EVENTS WHERE id = ?`
+
+	processedQuery, err := db.DB.Prepare(query)
+	if err != nil {
+		return errors.New(err.Error())
+	}
+	defer processedQuery.Close()
+	_, err = processedQuery.Exec(id)
+	if err != nil {
+		return errors.New(err.Error())
+	}
+	return nil
+}

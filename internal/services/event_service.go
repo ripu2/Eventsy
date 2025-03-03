@@ -45,3 +45,17 @@ func UpdateEvent(event models.Event, id int64) error {
 	}
 	return nil
 }
+
+func DeleteEvent(event models.Event, eventId int64) error {
+	event.ID = eventId
+	selectedEvent, err := GetEventById(eventId)
+	if err != nil {
+		return errors.New("event not found")
+	}
+	err = selectedEvent.DeleteEvent(eventId)
+	if err != nil {
+		return errors.New(err.Error())
+	}
+
+	return nil
+}

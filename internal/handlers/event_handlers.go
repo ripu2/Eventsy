@@ -6,102 +6,61 @@ import (
 
 	"example.com/event-management/internal/models"
 	"example.com/event-management/internal/services"
+	"example.com/event-management/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func GetEventsHandler(ctx *gin.Context) {
 	events, err := services.GetEvents()
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed to get events",
-			"err":     err.Error(),
-		})
-		return
-	}
-	ctx.JSON(http.StatusOK, events)
+	ErrorHandler(ctx, err, "Failed to get events", http.StatusInternalServerError)
+	HandleResponse(ctx, utils.GenerateMapForResponseType("data", "Fetched Events Successfully", events), http.StatusOK)
 }
 
 func CreateEventHandler(ctx *gin.Context) {
 	var event models.Event
 	err := ctx.ShouldBindBodyWithJSON(&event)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "Bad request",
-			"err":     err.Error(),
-		})
-		return
-	}
-	err = services.CreateEvent(event)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed to create event",
-			"err":     err.Error(),
-		})
-		return
-	}
+	ErrorHandler(ctx, err, "Bad request", http.StatusBadRequest)
 
-	ctx.JSON(http.StatusCreated, gin.H{
-		"message": "Event created successfully",
-		"event":   event,
-	})
+	err = services.CreateEvent(event)
+	ErrorHandler(ctx, err, "Failed to create event", http.StatusInternalServerError)
+
+	HandleResponse(ctx, utils.GenerateMapForResponseType("data", "Event created successfully", event), http.StatusCreated)
 }
 
 func GetEventByIdHandler(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
-
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid event ID",
-			"err":     err.Error(),
-		})
-		return
-	}
+	ErrorHandler(ctx, err, "Invalid event ID", http.StatusBadRequest)
 
 	event, err := services.GetEventById(int64(id))
-	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"message": "Failed to get event",
-			"err":     err.Error(),
-		})
-		return
-	}
+	ErrorHandler(ctx, err, "Failed to get event", http.StatusNotFound)
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "Event found",
-		"event":   event,
-		"id":      idParam,
-	})
+	HandleResponse(ctx, utils.GenerateMapForResponseType("data", "Fetched Events Successfully", event), http.StatusOK)
+
 }
 
-func UpdateEvent(ctx *gin.Context) {
+func UpdateEventHandler(ctx *gin.Context) {
 	var event models.Event
-	error := ctx.ShouldBindBodyWithJSON(&event)
-	if error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "Failed to update event",
-			"err":     error.Error(),
-		})
-	}
+	err := ctx.ShouldBindBodyWithJSON(&event)
+	ErrorHandler(ctx, err, "Bad request", http.StatusBadRequest)
+
 	idParam, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid event ID",
-			"err":     err.Error(),
-		})
-	}
+	ErrorHandler(ctx, err, "Invalid event ID", http.StatusBadRequest)
 
 	err = services.UpdateEvent(event, idParam)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed to update event",
-			"err":     err.Error(),
-		})
-		return
-	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "Event updated successfully",
-		"event":   event,
-		"id":      idParam,
-	})
+	ErrorHandler(ctx, err, "Failed to update event", http.StatusInternalServerError)
+
+	HandleResponse(ctx, utils.GenerateMapForResponseType("data", "Event updated successfully", event), http.StatusOK)
+}
+
+func DeleteEventHandler(ctx *gin.Context) {
+	idParam, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	var event models.Event
+	ErrorHandler(ctx, err, "Invalid event ID", http.StatusBadRequest)
+
+	err = services.DeleteEvent(event, idParam)
+	ErrorHandler(ctx, err, "Failed to get event", http.StatusNotFound)
+
+	HandleResponse(ctx, utils.GenerateMapForResponseType("data", "Event deleted successfully", "Event Deleted !!"), http.StatusOK)
+
 }
