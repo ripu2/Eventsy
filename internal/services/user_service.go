@@ -7,7 +7,7 @@ import (
 	"example.com/event-management/internal/models"
 )
 
-func CreateUser(user models.User) error {
+func CreateUser(user *models.User) error {
 	user.CreatedAt = time.Now()
 	err := user.SaveUser()
 	if err != nil {

@@ -12,7 +12,7 @@ type Event struct {
 	Description string `binding:"required"`
 	Location    string `binding:"required"`
 	DateTime    string `binding:"required"`
-	UserID      int
+	UserID      int64
 }
 
 func (e *Event) Save() error {
@@ -48,7 +48,7 @@ func GetAllEvents() ([]Event, error) {
 	var events = []Event{}
 	for response.Next() {
 		var event Event
-		err := response.Scan(&event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
+		err := response.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
 		if err != nil {
 			return nil, errors.New(err.Error())
 		}
@@ -76,9 +76,9 @@ func GetEventById(id int64) (*Event, error) {
 
 }
 
-func (event Event) UpdateEvent(id int64) error {
+func (event *Event) UpdateEvent(id int64) error {
 	query := `UPDATE EVENTS
-					SET name= ? , description= ? , location= ?, datetime= ?, userID= ?
+					SET name= ? , description= ? , location= ?, datetime= ?
 					WHERE id = ?`
 
 	processedQuery, err := db.DB.Prepare(query)
@@ -87,7 +87,7 @@ func (event Event) UpdateEvent(id int64) error {
 	}
 	defer processedQuery.Close()
 
-	result, err := processedQuery.Exec(event.Name, event.Description, event.Location, event.DateTime, event.UserID, id)
+	result, err := processedQuery.Exec(event.Name, event.Description, event.Location, event.DateTime, id)
 	if err != nil {
 		return errors.New(err.Error())
 	}

@@ -19,16 +19,19 @@ func GetEventsHandler(ctx *gin.Context) {
 
 func CreateEventHandler(ctx *gin.Context) {
 	var event models.Event
-	middleware.CheckForAuthentication(ctx)
+	id, authError := middleware.CheckForAuthentication(ctx)
+	utils.ErrorHandler(ctx, authError, "Bad request", http.StatusBadRequest)
 	err := ctx.ShouldBindBodyWithJSON(&event)
 	utils.ErrorHandler(ctx, err, "Bad request", http.StatusBadRequest)
-	err = services.CreateEvent(event)
+	err = services.CreateEvent(&event, id)
 	utils.ErrorHandler(ctx, err, "Failed to create event", http.StatusInternalServerError)
 
 	utils.HandleResponse(ctx, utils.GenerateMapForResponseType("data", "Event created successfully", event), http.StatusCreated)
 }
 
 func GetEventByIdHandler(ctx *gin.Context) {
+	id, authError := middleware.CheckForAuthentication(ctx)
+	utils.ErrorHandler(ctx, authError, "Bad request", http.StatusBadRequest)
 	idParam := ctx.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	utils.ErrorHandler(ctx, err, "Invalid event ID", http.StatusBadRequest)
@@ -41,6 +44,9 @@ func GetEventByIdHandler(ctx *gin.Context) {
 }
 
 func UpdateEventHandler(ctx *gin.Context) {
+	ownerId, authError := middleware.CheckForAuthentication(ctx)
+	utils.ErrorHandler(ctx, authError, "Bad request", http.StatusBadRequest)
+
 	var event models.Event
 	err := ctx.ShouldBindBodyWithJSON(&event)
 	utils.ErrorHandler(ctx, err, "Bad request", http.StatusBadRequest)
@@ -48,13 +54,15 @@ func UpdateEventHandler(ctx *gin.Context) {
 	idParam, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	utils.ErrorHandler(ctx, err, "Invalid event ID", http.StatusBadRequest)
 
-	err = services.UpdateEvent(event, idParam)
+	err = services.UpdateEvent(&event, idParam, ownerId)
 	utils.ErrorHandler(ctx, err, "Failed to update event", http.StatusInternalServerError)
 
 	utils.HandleResponse(ctx, utils.GenerateMapForResponseType("data", "Event updated successfully", event), http.StatusOK)
 }
 
 func DeleteEventHandler(ctx *gin.Context) {
+	_, authError := middleware.CheckForAuthentication(ctx)
+	utils.ErrorHandler(ctx, authError, "Bad request", http.StatusBadRequest)
 	idParam, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	var event models.Event
 	utils.ErrorHandler(ctx, err, "Invalid event ID", http.StatusBadRequest)

@@ -16,7 +16,7 @@ func GetUsersEventHandler(ctx *gin.Context) {
 }
 
 func CreateUserHandler(ctx *gin.Context) {
-	var user models.User
+	var user *models.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		utils.ErrorHandler(ctx, err, "Failed to bind JSON", http.StatusBadRequest)
 		return

@@ -42,7 +42,6 @@ func (user *User) SaveUser() error {
 	if err != nil {
 		return errors.New(err.Error())
 	}
-
 	user.ID = id
 	return nil
 }
@@ -85,7 +84,7 @@ func GetUserByUserName(userName string) (User, error) {
 	return user, nil
 }
 
-func (u LoginRequest) ValidateCredentials() (string, error) {
+func (u *LoginRequest) ValidateCredentials() (string, error) {
 	retrievedUser, err := GetUserByUserName(u.UserName)
 	if err != nil {
 		return "", errors.New(err.Error())

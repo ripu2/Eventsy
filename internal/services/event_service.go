@@ -14,9 +14,8 @@ func GetEvents() ([]models.Event, error) {
 	return events, nil
 }
 
-func CreateEvent(event models.Event) error {
-	event.ID = 1
-	event.UserID = 1
+func CreateEvent(event *models.Event, creatorId int64) error {
+	event.UserID = creatorId
 	err := event.Save()
 	if err != nil {
 		return errors.New("failed to create event") // return early if there is an error saving the event. No need to continue with the rest of the function.
@@ -32,13 +31,16 @@ func GetEventById(eventId int64) (models.Event, error) {
 	return *event, nil
 }
 
-func UpdateEvent(event models.Event, id int64) error {
+func UpdateEvent(event *models.Event, id int64, ownerId int64) error {
 	event.ID = id
-	_, err := GetEventById(id)
+	event.UserID = ownerId
+	fetchedEvent, err := GetEventById(id)
 	if err != nil {
 		return errors.New("event not found")
 	}
-
+	if ownerId != fetchedEvent.UserID {
+		return errors.New("Unauthorized")
+	}
 	err = event.UpdateEvent(id)
 	if err != nil {
 		return errors.New(err.Error())
