@@ -8,18 +8,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CheckForAuthentication(ctx *gin.Context) (int64, error) {
+func CheckForAuthentication(ctx *gin.Context) {
 	token := ctx.Request.Header.Get("Authorization")
 	if token == "" {
 		utils.ErrorHandler(ctx, errors.New("Unauthenticated"), "Unauthenticated", http.StatusUnauthorized)
-		return 0, nil
 	}
 
 	id, err := utils.VerifyToken(token)
 	if err != nil {
 		utils.ErrorHandler(ctx, errors.New(err.Error()), "Unauthenticated", http.StatusUnauthorized)
-		return 0, nil
 	}
+	ctx.Set("userId", id)
+	ctx.Next()
 
-	return id, nil
 }

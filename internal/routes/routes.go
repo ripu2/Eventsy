@@ -2,15 +2,19 @@ package routes
 
 import (
 	"example.com/event-management/internal/handlers"
+	"example.com/event-management/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRoutes(server *gin.Engine) {
 	server.GET("/events", handlers.GetEventsHandler)
-	server.POST("/createEvent", handlers.CreateEventHandler)
-	server.GET("/events/:id", handlers.GetEventByIdHandler)
-	server.PUT("/updateEvent/:id", handlers.UpdateEventHandler)
-	server.DELETE("/deleteEvent/:id", handlers.DeleteEventHandler)
+
+	authServer := server.Group("/")
+	authServer.Use(middleware.CheckForAuthentication)
+	authServer.POST("/createEvent", handlers.CreateEventHandler)
+	authServer.GET("/events/:id", handlers.GetEventByIdHandler)
+	authServer.PUT("/updateEvent/:id", handlers.UpdateEventHandler)
+	authServer.DELETE("/deleteEvent/:id", handlers.DeleteEventHandler)
 
 	// User routes
 

@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"example.com/event-management/internal/middleware"
 	"example.com/event-management/internal/models"
 	"example.com/event-management/internal/services"
 	"example.com/event-management/internal/utils"
@@ -19,8 +18,7 @@ func GetEventsHandler(ctx *gin.Context) {
 
 func CreateEventHandler(ctx *gin.Context) {
 	var event models.Event
-	id, authError := middleware.CheckForAuthentication(ctx)
-	utils.ErrorHandler(ctx, authError, "Bad request", http.StatusBadRequest)
+	id := ctx.GetInt64("userId")
 	err := ctx.ShouldBindBodyWithJSON(&event)
 	utils.ErrorHandler(ctx, err, "Bad request", http.StatusBadRequest)
 	err = services.CreateEvent(&event, id)
@@ -30,8 +28,6 @@ func CreateEventHandler(ctx *gin.Context) {
 }
 
 func GetEventByIdHandler(ctx *gin.Context) {
-	id, authError := middleware.CheckForAuthentication(ctx)
-	utils.ErrorHandler(ctx, authError, "Bad request", http.StatusBadRequest)
 	idParam := ctx.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	utils.ErrorHandler(ctx, err, "Invalid event ID", http.StatusBadRequest)
@@ -44,9 +40,7 @@ func GetEventByIdHandler(ctx *gin.Context) {
 }
 
 func UpdateEventHandler(ctx *gin.Context) {
-	ownerId, authError := middleware.CheckForAuthentication(ctx)
-	utils.ErrorHandler(ctx, authError, "Bad request", http.StatusBadRequest)
-
+	ownerId := ctx.GetInt64("userId")
 	var event models.Event
 	err := ctx.ShouldBindBodyWithJSON(&event)
 	utils.ErrorHandler(ctx, err, "Bad request", http.StatusBadRequest)
@@ -61,13 +55,12 @@ func UpdateEventHandler(ctx *gin.Context) {
 }
 
 func DeleteEventHandler(ctx *gin.Context) {
-	_, authError := middleware.CheckForAuthentication(ctx)
-	utils.ErrorHandler(ctx, authError, "Bad request", http.StatusBadRequest)
 	idParam, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	ownerId := ctx.GetInt64("userId")
 	var event models.Event
 	utils.ErrorHandler(ctx, err, "Invalid event ID", http.StatusBadRequest)
 
-	err = services.DeleteEvent(event, idParam)
+	err = services.DeleteEvent(event, idParam, ownerId)
 	utils.ErrorHandler(ctx, err, "Failed to get event", http.StatusNotFound)
 
 	utils.HandleResponse(ctx, utils.GenerateMapForResponseType("data", "Event deleted successfully", "Event Deleted !!"), http.StatusOK)

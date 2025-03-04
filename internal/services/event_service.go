@@ -48,11 +48,14 @@ func UpdateEvent(event *models.Event, id int64, ownerId int64) error {
 	return nil
 }
 
-func DeleteEvent(event models.Event, eventId int64) error {
+func DeleteEvent(event models.Event, eventId int64, ownerId int64) error {
 	event.ID = eventId
 	selectedEvent, err := GetEventById(eventId)
 	if err != nil {
 		return errors.New("event not found")
+	}
+	if ownerId != selectedEvent.UserID {
+		return errors.New("Unauthorized")
 	}
 	err = selectedEvent.DeleteEvent(eventId)
 	if err != nil {
