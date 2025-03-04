@@ -78,7 +78,13 @@
 			"name": "UpdateEvent",
 			"request": {
 				"method": "PUT",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"name\": \"Test Updated\",\n    \"description\": \"Test Updated\",\n    \"location\": \"Ghar Updates\",\n    \"dateTime\": \"2025-01-01T15:30:00.000Z\"\n}",
@@ -89,13 +95,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{HOST}}/updateEvent/1",
+					"raw": "{{HOST}}/updateEvent/3",
 					"host": [
 						"{{HOST}}"
 					],
 					"path": [
 						"updateEvent",
-						"1"
+						"3"
 					]
 				}
 			},
@@ -113,13 +119,13 @@
 					}
 				],
 				"url": {
-					"raw": "{{HOST}}/deleteEvent/2",
+					"raw": "{{HOST}}/deleteEvent/1",
 					"host": [
 						"{{HOST}}"
 					],
 					"path": [
 						"deleteEvent",
-						"2"
+						"1"
 					]
 				}
 			},
@@ -132,7 +138,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"Sunny Leone Shah\",\n    \"userName\": \"ShahKiSunny\",\n    \"email\": \"shah@example.com\",\n    \"passwordHash\": \"hashed_password_123\"\n}\n",
+					"raw": "{\n    \"name\": \"Mia Khalifa Modi\",\n    \"userName\": \"Modi ki Mia\",\n    \"email\": \"modikimia@example.com\",\n    \"passwordHash\": \"hashed_password_123\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -211,7 +217,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"userName\": \"ShahKiSunny\",\n    \"passwordHash\": \"hashed_password_123\"\n}",
+					"raw": "{\n    \"userName\": \"Modi ki Mia\",\n    \"passwordHash\": \"hashed_password_123\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
