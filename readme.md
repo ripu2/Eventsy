@@ -54,7 +54,9 @@ DB_PORT=5432
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_NAME=eventsy_db
-SERVER_PORT=8080
+PORT=8080
+JWT_SECRET=""
+JWT_EXPIRY_HOURS=
 ```
 Modify these according to your local setup.
 

@@ -18,8 +18,24 @@ func InitDB() {
 	fmt.Println("Database initialized successfully!!!")
 	DB.SetMaxOpenConns(10)
 	DB.SetMaxIdleConns(5)
-
+	createUsersTable()
 	createTables()
+}
+
+func createUsersTable() {
+	createUsersTable := `CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name TEXT NOT NULL,
+    userName TEXT UNIQUE NOT NULL,  -- unique identifier for each user
+    email TEXT UNIQUE NOT NULL,
+    passwordHash TEXT NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+`
+	_, err := DB.Exec(createUsersTable)
+	if err != nil {
+		panic("Failed to create userTable!!! + error: " + err.Error())
+	}
 }
 
 func createTables() {
@@ -30,11 +46,12 @@ func createTables() {
     description TEXT NOT NULL,
 		location TEXT NOT NULL,
     dateTime DATETIME NOT NULL,
-		userId INTEGER NOT NULL
+		userId INTEGER NOT NULL,
+		FOREIGN KEY(userId) REFERENCES users(id)
 	)
 	`
 	_, err := DB.Exec(createEventTable)
 	if err != nil {
-		panic("Failed to create EventsTable!!!")
+		panic("Failed to create EventsTable!!! + error: " + err.Error())
 	}
 }

@@ -48,7 +48,7 @@ func GetAllEvents() ([]Event, error) {
 	var events = []Event{}
 	for response.Next() {
 		var event Event
-		err := response.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
+		err := response.Scan(&event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
 		if err != nil {
 			return nil, errors.New(err.Error())
 		}
