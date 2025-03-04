@@ -95,13 +95,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{HOST}}/updateEvent/3",
+					"raw": "{{HOST}}/updateEvent/10",
 					"host": [
 						"{{HOST}}"
 					],
 					"path": [
 						"updateEvent",
-						"3"
+						"10"
 					]
 				}
 			},
@@ -217,7 +217,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"userName\": \"Modi ki Mia\",\n    \"passwordHash\": \"hashed_password_123\"\n}",
+					"raw": "{\n            \"UserName\": \"ShahKiSunny\",\n    \"passwordHash\": \"hashed_password_123\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -233,6 +233,46 @@
 						"login"
 					]
 				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetRegistrations",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterEvent",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{HOST}}/registration/3",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"registration",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": []
 			},
 			"response": []
 		}

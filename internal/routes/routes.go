@@ -15,6 +15,9 @@ func SetupRoutes(server *gin.Engine) {
 	authServer.GET("/events/:id", handlers.GetEventByIdHandler)
 	authServer.PUT("/updateEvent/:id", handlers.UpdateEventHandler)
 	authServer.DELETE("/deleteEvent/:id", handlers.DeleteEventHandler)
+	authServer.GET("/registration", handlers.GetRegistrationHandler)
+	authServer.POST("/registration/:id", handlers.RegistrationHandler)
+	authServer.DELETE("/withdrawRegistration/:id", handlers.WithdrawRegistrationHandler)
 
 	// User routes
 
