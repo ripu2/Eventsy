@@ -60,7 +60,7 @@ func DeleteEventHandler(ctx *gin.Context) {
 	var event models.Event
 	utils.ErrorHandler(ctx, err, "Invalid event ID", http.StatusBadRequest)
 
-	err = services.DeleteEvent(event, idParam, ownerId)
+	err = services.DeleteEvent(&event, idParam, ownerId)
 	utils.ErrorHandler(ctx, err, "Failed to get event", http.StatusNotFound)
 
 	utils.HandleResponse(ctx, utils.GenerateMapForResponseType("data", "Event deleted successfully", "Event Deleted !!"), http.StatusOK)
